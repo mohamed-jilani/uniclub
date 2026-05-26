@@ -1,5 +1,8 @@
+================================================================================
 
     PROJET: UniClub Connect - Gestion de la Vie Associative Universitaire
+
+================================================================================
 
 AUTEUR: Projet de Modélisation de Base de Données
 DATE: Mai 2026
@@ -7,7 +10,11 @@ SGBD: PostgreSQL 15+
 
 lien video : https://www.youtube.com/watch?v=715aP93wlq4
 
+================================================================================
+
 1. DESCRIPTION DU PROJET
+
+================================================================================
 
 UniClub Connect est une plateforme de gestion de la vie associative 
 universitaire permettant:
@@ -17,9 +24,11 @@ universitaire permettant:
 - D'organiser des événements (conférences et ateliers)
 - Aux membres de participer aux événements
 
+================================================================================
 
 2. PRÉREQUIS SYSTÈME
 
+================================================================================
 
 Logiciels nécessaires:
 - PostgreSQL 15 ou supérieur
@@ -33,9 +42,11 @@ Si PostgreSQL n'est pas installé:
 - macOS: brew install postgresql
 - Windows: Télécharger depuis https://www.postgresql.org/download/
 
+================================================================================
 
 3. STRUCTURE DES FICHIERS
 
+================================================================================
 
 UniClub_Connect/
 ├── README.txt                          (ce fichier)
@@ -44,9 +55,11 @@ UniClub_Connect/
 ├── Rapport_UniClub_Connect.pdf         (rapport complet du projet)
 └── video_demonstration.mp4             (vidéo de démonstration)
 
+================================================================================
 
 4. INSTALLATION ET EXÉCUTION
 
+================================================================================
 
 Étape 1: Créer une base de données
 -----------------------------------
@@ -76,9 +89,11 @@ psql -U uniclub_user -d uniclub_db -h localhost -f create_tables.sql
 ou depuis le terminal:
 psql -U uniclub_user -d uniclub_db -h localhost -f insert_data.sql
 
+================================================================================
 
 5. VÉRIFICATION DE L'INSTALLATION
 
+================================================================================
 
 Une fois connecté à la base (psql -U uniclub_user -d uniclub_db):
 
@@ -102,9 +117,11 @@ SELECT 'Participe', COUNT(*) FROM Participe;
 
 -- Vous devriez obtenir au moins 5 tuples par table
 
+================================================================================
 
 6. REQUÊTES D'EXEMPLE
 
+================================================================================
 
 -- Afficher tous les clubs validés
 SELECT * FROM Club WHERE statut_validation = 'valide';
@@ -141,9 +158,11 @@ LEFT JOIN Evenement e ON c.id_club = e.id_club_organisateur
 GROUP BY c.id_club, c.nom
 ORDER BY nb_evenements DESC;
 
+================================================================================
 
 7. CONTRAINTES IMPLÉMENTÉES
 
+================================================================================
 
 Clés primaires:
 - Membre(id_membre)
@@ -176,9 +195,11 @@ Contraintes UNIQUE:
 - Membre.email
 - Club.nom
 
+================================================================================
 
 8. SCHEMA RELATIONNEL
 
+================================================================================
 
 Membre(id_membre PK, nom, prenom, email UNIQUE, statut)
 Club(id_club PK, nom UNIQUE, thematique, date_creation, statut_validation, 
@@ -194,18 +215,22 @@ Participe(id_membre FK→Membre, id_evenement FK→Evenement, date_inscription,
 
 Total: 7 relations (> 5 requis)
 
+================================================================================
 
 9. SUPPORT ET CONTACT
 
+================================================================================
 
 Pour toute question concernant ce projet:
 - Consulter le rapport PDF complet
 - Visionner la vidéo de démonstration
 - Contacter l'auteur du projet
 
+================================================================================
 
 10. NOTES IMPORTANTES
 
+================================================================================
 
 - La spécialisation Evenement → {Conference, Atelier} est TOTALE et DISJOINTE
 - Un membre ne peut pas s'inscrire deux fois au même événement (PK de Participe)
@@ -213,6 +238,8 @@ Pour toute question concernant ce projet:
 - Toutes les contraintes métier sont respectées
 - Les données d'exemple respectent toutes les contraintes d'intégrité
 
+================================================================================
 
 FIN DU README
 
+================================================================================
