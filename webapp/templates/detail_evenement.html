@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}{{ ev.titre }} — UniClub Connect{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">{{ ev.titre }}</h1>
+    <a href="{{ url_for('evenements') }}" class="btn btn-gray">← Retour</a>
+</div>
+
+<div class="row-2">
+    <div class="card">
+        <h2>Informations</h2>
+        <dl class="info-list">
+            <dt>Type</dt>
+            <dd><span class="badge {{ 'badge-blue' if ev.type_ev == 'Conférence' else 'badge-green' }}">{{ ev.type_ev }}</span></dd>
+            <dt>Date</dt><dd>{{ ev.date_evenement.strftime('%d/%m/%Y') }}</dd>
+            <dt>Durée</dt><dd>{{ ev.duree }}</dd>
+            <dt>Lieu</dt><dd>{{ ev.lieu }}</dd>
+            <dt>Club organisateur</dt><dd>{{ ev.nom_club }}</dd>
+        </dl>
+        {% if conf %}
+        <hr>
+        <h3>Détails conférence</h3>
+        <dl class="info-list">
+            <dt>Intervenant</dt><dd>{{ conf.intervenant }}</dd>
+            {% if conf.support %}<dt>Support</dt><dd>{{ conf.support }}</dd>{% endif %}
+            {% if conf.capacite_max %}<dt>Capacité max</dt><dd>{{ conf.capacite_max }} personnes</dd>{% endif %}
+        </dl>
+        {% elif atelier %}
+        <hr>
+        <h3>Détails atelier</h3>
+        <dl class="info-list">
+            <dt>Postes</dt><dd>{{ atelier.nb_postes }}</dd>
+            <dt>Niveau</dt><dd><span class="badge badge-orange">{{ atelier.niveau_requis }}</span></dd>
+            {% if atelier.materiel %}<dt>Matériel</dt><dd>{{ atelier.materiel }}</dd>{% endif %}
+        </dl>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2>Inscrire un membre</h2>
+        <form method="post" action="{{ url_for('inscrire', id_ev=ev.id_evenement) }}">
+            <div class="form-group">
+                <label>Membre</label>
+                <select name="id_membre" required>
+                    <option value="">-- Choisir --</option>
+                    {% for m in tous_membres %}
+                    <option value="{{ m.id_membre }}">{{ m.nom_complet }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-blue">Inscrire</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Participants ({{ participants|length }})</h2>
+    {% if participants %}
+    <table>
+        <thead><tr><th>Nom</th><th>Email</th><th>Inscrit le</th><th>Présence</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for p in participants %}
+        <tr>
+            <td><a href="{{ url_for('detail_membre', id=p.id_membre) }}">{{ p.nom }} {{ p.prenom }}</a></td>
+            <td>{{ p.email }}</td>
+            <td>{{ p.date_inscription.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>
+                <span class="badge {{ 'badge-green' if p.present else 'badge-gray' }}">
+                    {{ 'Présent' if p.present else 'Absent' }}
+                </span>
+            </td>
+            <td class="actions">
+                <form method="post" action="{{ url_for('marquer_presence', id_ev=ev.id_evenement, id_membre=p.id_membre) }}" style="display:inline">
+                    <input type="hidden" name="present" value="{{ 'false' if p.present else 'true' }}">
+                    <button class="btn btn-sm {{ 'btn-gray' if p.present else 'btn-green' }}">
+                        {{ 'Marquer absent' if p.present else 'Marquer présent' }}
+                    </button>
+                </form>
+                <form method="post" action="{{ url_for('desinscrire', id_ev=ev.id_evenement, id_membre=p.id_membre) }}"
+                      onsubmit="return confirm('Désinscrire ce membre ?');" style="display:inline">
+                    <button class="btn btn-sm btn-red">Désinscrire</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">Aucun participant inscrit.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — UniClub Connect{% endblock %}
+{% block content %}
+<h1 class="page-title">Tableau de bord</h1>
+
+<div class="stats-grid">
+    <div class="stat-card blue">
+        <div class="stat-number">{{ stats.membre }}</div>
+        <div class="stat-label">Membres</div>
+    </div>
+    <div class="stat-card green">
+        <div class="stat-number">{{ stats.club }}</div>
+        <div class="stat-label">Clubs</div>
+    </div>
+    <div class="stat-card orange">
+        <div class="stat-number">{{ stats.evenement }}</div>
+        <div class="stat-label">Événements</div>
+    </div>
+    <div class="stat-card purple">
+        <div class="stat-number">{{ stats.adhere }}</div>
+        <div class="stat-label">Adhésions</div>
+    </div>
+    <div class="stat-card red">
+        <div class="stat-number">{{ stats.participe }}</div>
+        <div class="stat-label">Participations</div>
+    </div>
+</div>
+
+<div class="row-2">
+    <div class="card">
+        <h2>Top clubs (par événements)</h2>
+        {% if top_clubs %}
+        <table>
+            <thead><tr><th>Club</th><th>Événements</th></tr></thead>
+            <tbody>
+            {% for c in top_clubs %}
+            <tr>
+                <td>{{ c.nom }}</td>
+                <td><span class="badge badge-blue">{{ c.nb_evenements }}</span></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty">Aucun club validé pour l'instant.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2>Prochains événements</h2>
+        {% if prochains %}
+        <table>
+            <thead><tr><th>Titre</th><th>Date</th><th>Type</th></tr></thead>
+            <tbody>
+            {% for e in prochains %}
+            <tr>
+                <td>{{ e.titre }}</td>
+                <td>{{ e.date_evenement.strftime('%d/%m/%Y') }}</td>
+                <td><span class="badge {{ 'badge-blue' if e.type_ev == 'Conférence' else 'badge-green' }}">{{ e.type_ev }}</span></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty">Aucun événement à venir.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="quick-actions card">
+    <h2>Actions rapides</h2>
+    <div class="btn-group">
+        <a href="{{ url_for('ajouter_membre') }}" class="btn btn-blue">+ Nouveau membre</a>
+        <a href="{{ url_for('ajouter_club') }}" class="btn btn-green">+ Nouveau club</a>
+        <a href="{{ url_for('ajouter_evenement') }}" class="btn btn-orange">+ Nouvel événement</a>
+        <a href="{{ url_for('stats') }}" class="btn btn-purple">Voir les stats</a>
+    </div>
+</div>
+{% endblock %}

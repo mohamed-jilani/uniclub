@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Événements — UniClub Connect{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Événements</h1>
+    <a href="{{ url_for('ajouter_evenement') }}" class="btn btn-orange">+ Créer un événement</a>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr><th>Titre</th><th>Date</th><th>Lieu</th><th>Club</th><th>Type</th><th>Inscrits</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+        {% for e in evenements %}
+        <tr>
+            <td><strong>{{ e.titre }}</strong></td>
+            <td>{{ e.date_evenement.strftime('%d/%m/%Y') }}</td>
+            <td>{{ e.lieu }}</td>
+            <td>{{ e.nom_club }}</td>
+            <td><span class="badge {{ 'badge-blue' if e.type_ev == 'Conférence' else 'badge-green' }}">{{ e.type_ev }}</span></td>
+            <td>{{ e.nb_inscrits }}</td>
+            <td class="actions">
+                <a href="{{ url_for('detail_evenement', id=e.id_evenement) }}" class="btn btn-sm btn-gray">Détail</a>
+                <form method="post" action="{{ url_for('supprimer_evenement', id=e.id_evenement) }}"
+                      onsubmit="return confirm('Supprimer cet événement ?');" style="display:inline">
+                    <button class="btn btn-sm btn-red">🗑</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="empty">Aucun événement enregistré.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

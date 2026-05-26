@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}{{ club.nom }} — UniClub Connect{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">{{ club.nom }}</h1>
+    <a href="{{ url_for('clubs') }}" class="btn btn-gray">← Retour</a>
+</div>
+
+<div class="row-2">
+    <div class="card">
+        <h2>Informations</h2>
+        <dl class="info-list">
+            <dt>Thématique</dt><dd>{{ club.thematique }}</dd>
+            <dt>Fondateur</dt><dd>{{ club.fondateur }}</dd>
+            <dt>Date de création</dt><dd>{{ club.date_creation.strftime('%d/%m/%Y') }}</dd>
+            <dt>Statut</dt>
+            <dd><span class="badge {{ {'valide':'badge-green','en_attente':'badge-orange','refuse':'badge-red'}[club.statut_validation] }}">
+                {{ club.statut_validation.replace('_', ' ') }}
+            </span></dd>
+        </dl>
+        <div class="btn-group mt">
+            {% if club.statut_validation != 'valide' %}
+            <form method="post" action="{{ url_for('valider_club', id=club.id_club) }}" style="display:inline">
+                <input type="hidden" name="statut" value="valide">
+                <button class="btn btn-green">✓ Valider</button>
+            </form>
+            {% endif %}
+            {% if club.statut_validation != 'refuse' %}
+            <form method="post" action="{{ url_for('valider_club', id=club.id_club) }}" style="display:inline">
+                <input type="hidden" name="statut" value="refuse">
+                <button class="btn btn-red">✗ Refuser</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Ajouter un membre au club</h2>
+        <form method="post" action="{{ url_for('adherer', id_club=club.id_club) }}">
+            <div class="form-group">
+                <label>Membre</label>
+                <select name="id_membre" required>
+                    <option value="">-- Choisir --</option>
+                    {% for m in tous_membres %}
+                    <option value="{{ m.id_membre }}">{{ m.nom_complet }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Rôle</label>
+                <select name="role">
+                    <option value="membre">Membre</option>
+                    <option value="president">Président</option>
+                    <option value="tresorier">Trésorier</option>
+                    <option value="secretaire">Secrétaire</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-blue">Ajouter</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Membres du club ({{ membres|length }})</h2>
+    {% if membres %}
+    <table>
+        <thead><tr><th>Nom</th><th>Email</th><th>Statut</th><th>Rôle</th><th>Depuis</th><th>Action</th></tr></thead>
+        <tbody>
+        {% for m in membres %}
+        <tr>
+            <td><a href="{{ url_for('detail_membre', id=m.id_membre) }}">{{ m.nom }} {{ m.prenom }}</a></td>
+            <td>{{ m.email }}</td>
+            <td><span class="badge {{ 'badge-blue' if m.statut == 'etudiant' else 'badge-purple' }}">{{ m.statut }}</span></td>
+            <td><span class="badge badge-green">{{ m.role_dans_club }}</span></td>
+            <td>{{ m.date_adhesion.strftime('%d/%m/%Y') }}</td>
+            <td>
+                <form method="post" action="{{ url_for('retirer_membre_club', id_club=club.id_club, id_membre=m.id_membre) }}"
+                      onsubmit="return confirm('Retirer ce membre ?');" style="display:inline">
+                    <button class="btn btn-sm btn-red">Retirer</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">Aucun membre dans ce club.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Événements organisés ({{ evenements|length }})</h2>
+    {% if evenements %}
+    <table>
+        <thead><tr><th>Titre</th><th>Date</th><th>Lieu</th><th>Type</th><th>Inscrits</th><th>Action</th></tr></thead>
+        <tbody>
+        {% for e in evenements %}
+        <tr>
+            <td>{{ e.titre }}</td>
+            <td>{{ e.date_evenement.strftime('%d/%m/%Y') }}</td>
+            <td>{{ e.lieu }}</td>
+            <td><span class="badge {{ 'badge-blue' if e.type_ev == 'Conférence' else 'badge-green' }}">{{ e.type_ev }}</span></td>
+            <td>{{ e.nb_inscrits }}</td>
+            <td><a href="{{ url_for('detail_evenement', id=e.id_evenement) }}" class="btn btn-sm btn-gray">Voir</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">Aucun événement organisé par ce club.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Clubs — UniClub Connect{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Clubs</h1>
+    <a href="{{ url_for('ajouter_club') }}" class="btn btn-green">+ Créer un club</a>
+</div>
+
+<div class="filter-bar card">
+    <strong>Filtrer :</strong>
+    <a href="{{ url_for('clubs') }}" class="btn btn-sm {{ 'btn-blue' if not filtre else 'btn-gray' }}">Tous</a>
+    <a href="{{ url_for('clubs', statut='valide') }}" class="btn btn-sm {{ 'btn-green' if filtre == 'valide' else 'btn-gray' }}">Validés</a>
+    <a href="{{ url_for('clubs', statut='en_attente') }}" class="btn btn-sm {{ 'btn-orange' if filtre == 'en_attente' else 'btn-gray' }}">En attente</a>
+    <a href="{{ url_for('clubs', statut='refuse') }}" class="btn btn-sm {{ 'btn-red' if filtre == 'refuse' else 'btn-gray' }}">Refusés</a>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr><th>Club</th><th>Thématique</th><th>Fondateur</th><th>Statut</th><th>Membres</th><th>Événements</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+        {% for c in clubs %}
+        <tr>
+            <td><strong>{{ c.nom }}</strong></td>
+            <td>{{ c.thematique }}</td>
+            <td>{{ c.fondateur }}</td>
+            <td>
+                <span class="badge {{ {'valide':'badge-green','en_attente':'badge-orange','refuse':'badge-red'}[c.statut_validation] }}">
+                    {{ c.statut_validation.replace('_', ' ') }}
+                </span>
+            </td>
+            <td>{{ c.nb_membres }}</td>
+            <td>{{ c.nb_events }}</td>
+            <td class="actions">
+                <a href="{{ url_for('detail_club', id=c.id_club) }}" class="btn btn-sm btn-gray">Détail</a>
+                {% if c.statut_validation != 'valide' %}
+                <form method="post" action="{{ url_for('valider_club', id=c.id_club) }}" style="display:inline">
+                    <input type="hidden" name="statut" value="valide">
+                    <button class="btn btn-sm btn-green">Valider</button>
+                </form>
+                {% endif %}
+                {% if c.statut_validation != 'refuse' %}
+                <form method="post" action="{{ url_for('valider_club', id=c.id_club) }}" style="display:inline">
+                    <input type="hidden" name="statut" value="refuse">
+                    <button class="btn btn-sm btn-red">Refuser</button>
+                </form>
+                {% endif %}
+                <form method="post" action="{{ url_for('supprimer_club', id=c.id_club) }}"
+                      onsubmit="return confirm('Supprimer ce club et tous ses événements ?');" style="display:inline">
+                    <button class="btn btn-sm btn-red">🗑</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="empty">Aucun club trouvé.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

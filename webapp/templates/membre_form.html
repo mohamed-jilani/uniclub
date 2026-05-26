@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Modifier' if membre else 'Ajouter' }} un membre{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">{{ 'Modifier' if membre else 'Ajouter' }} un membre</h1>
+    <a href="{{ url_for('membres') }}" class="btn btn-gray">← Retour</a>
+</div>
+
+<div class="card form-card">
+    <form method="post">
+        <div class="form-group">
+            <label>Nom</label>
+            <input type="text" name="nom" value="{{ membre.nom if membre else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label>Prénom</label>
+            <input type="text" name="prenom" value="{{ membre.prenom if membre else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" value="{{ membre.email if membre else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label>Statut</label>
+            <select name="statut">
+                <option value="etudiant" {{ 'selected' if membre and membre.statut == 'etudiant' }}>Étudiant</option>
+                <option value="professeur" {{ 'selected' if membre and membre.statut == 'professeur' }}>Professeur</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-blue">
+            {{ 'Enregistrer les modifications' if membre else 'Ajouter le membre' }}
+        </button>
+    </form>
+</div>
+{% endblock %}

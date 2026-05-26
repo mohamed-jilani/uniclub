@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Membres — UniClub Connect{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Membres</h1>
+    <a href="{{ url_for('ajouter_membre') }}" class="btn btn-blue">+ Ajouter un membre</a>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>#</th><th>Nom</th><th>Email</th><th>Statut</th>
+                <th>Clubs</th><th>Événements</th><th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for m in membres %}
+        <tr>
+            <td>{{ m.id_membre }}</td>
+            <td><strong>{{ m.nom }} {{ m.prenom }}</strong></td>
+            <td>{{ m.email }}</td>
+            <td>
+                <span class="badge {{ 'badge-blue' if m.statut == 'etudiant' else 'badge-purple' }}">
+                    {{ m.statut }}
+                </span>
+            </td>
+            <td>{{ m.nb_clubs }}</td>
+            <td>{{ m.nb_events }}</td>
+            <td class="actions">
+                <a href="{{ url_for('detail_membre', id=m.id_membre) }}" class="btn btn-sm btn-gray">Détail</a>
+                <a href="{{ url_for('modifier_membre', id=m.id_membre) }}" class="btn btn-sm btn-orange">Modifier</a>
+                <form method="post" action="{{ url_for('supprimer_membre', id=m.id_membre) }}"
+                      onsubmit="return confirm('Supprimer ce membre ?');" style="display:inline">
+                    <button class="btn btn-sm btn-red">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="empty">Aucun membre enregistré.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block title %}Statistiques — UniClub Connect{% endblock %}
+{% block content %}
+<h1 class="page-title">Statistiques</h1>
+
+<div class="row-2">
+    <div class="card">
+        <h2>Répartition des membres</h2>
+        {% for r in repartition %}
+        <div class="bar-item">
+            <span class="bar-label">{{ r.statut }}</span>
+            <div class="bar-track">
+                <div class="bar-fill {{ 'bar-blue' if r.statut == 'etudiant' else 'bar-purple' }}"
+                     style="width: {{ [r.nb * 100 // (repartition|sum(attribute='nb')), 100]|min }}%">
+                    {{ r.nb }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="card">
+        <h2>Présence aux événements</h2>
+        {% if presence %}
+        {% set total = (presence.presents or 0) + (presence.absents or 0) %}
+        {% if total > 0 %}
+        <div class="bar-item">
+            <span class="bar-label">Présents</span>
+            <div class="bar-track">
+                <div class="bar-fill bar-green" style="width: {{ presence.presents * 100 // total }}%">
+                    {{ presence.presents }}
+                </div>
+            </div>
+        </div>
+        <div class="bar-item">
+            <span class="bar-label">Absents</span>
+            <div class="bar-track">
+                <div class="bar-fill bar-red" style="width: {{ presence.absents * 100 // total }}%">
+                    {{ presence.absents }}
+                </div>
+            </div>
+        </div>
+        <p class="stat-note">Taux de présence : <strong>{{ presence.presents * 100 // total }}%</strong></p>
+        {% else %}
+        <p class="empty">Aucune participation enregistrée.</p>
+        {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<div class="row-2">
+    <div class="card">
+        <h2>Membres par club (clubs validés)</h2>
+        {% if clubs_membres %}
+        <table>
+            <thead><tr><th>Club</th><th>Membres</th></tr></thead>
+            <tbody>
+            {% for c in clubs_membres %}
+            <tr>
+                <td>{{ c.nom }}</td>
+                <td>
+                    <div class="inline-bar">
+                        <div class="inline-fill" style="width: {{ [c.nb_membres * 10, 200]|min }}px"></div>
+                        <span>{{ c.nb_membres }}</span>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty">Aucun club validé.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2>Top 10 participants</h2>
+        {% if top_participants %}
+        <table>
+            <thead><tr><th>Membre</th><th>Participations</th></tr></thead>
+            <tbody>
+            {% for p in top_participants %}
+            <tr>
+                <td>{{ p.membre }}</td>
+                <td><span class="badge badge-blue">{{ p.nb_events }}</span></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty">Aucune participation.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <h2>Niveaux requis pour les ateliers</h2>
+    <div class="badges-row">
+        {% for n in niveaux %}
+        <div class="level-card">
+            <div class="level-num">{{ n.nb }}</div>
+            <div class="level-name {{ {'debutant':'green','intermediaire':'orange','avance':'red'}[n.niveau_requis] }}">
+                {{ n.niveau_requis }}
+            </div>
+        </div>
+        {% else %}
+        <p class="empty">Aucun atelier enregistré.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

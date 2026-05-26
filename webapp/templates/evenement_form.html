@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Créer un événement — UniClub Connect{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Créer un événement</h1>
+    <a href="{{ url_for('evenements') }}" class="btn btn-gray">← Retour</a>
+</div>
+
+<div class="card form-card">
+    <form method="post" id="ev-form">
+        <div class="form-group">
+            <label>Titre</label>
+            <input type="text" name="titre" required>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" name="date_evenement" required>
+            </div>
+            <div class="form-group">
+                <label>Durée (heures)</label>
+                <input type="number" name="duree" min="1" max="24" value="2" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Lieu</label>
+            <input type="text" name="lieu" placeholder="ex: Amphi A, Salle 201..." required>
+        </div>
+        <div class="form-group">
+            <label>Club organisateur</label>
+            <select name="id_club" required>
+                <option value="">-- Choisir un club validé --</option>
+                {% for c in clubs %}
+                <option value="{{ c.id_club }}">{{ c.nom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Type d'événement</label>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="type_ev" value="conference" checked onchange="toggleType()">
+                    Conférence
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="type_ev" value="atelier" onchange="toggleType()">
+                    Atelier
+                </label>
+            </div>
+        </div>
+
+        <div id="conf-fields" class="type-fields">
+            <h3>Détails conférence</h3>
+            <div class="form-group">
+                <label>Intervenant</label>
+                <input type="text" name="intervenant" placeholder="Nom de l'intervenant">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Support</label>
+                    <select name="support">
+                        <option value="">-- Aucun --</option>
+                        <option value="PDF">PDF</option>
+                        <option value="PPT">PPT</option>
+                        <option value="PPTX">PPTX</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Capacité max</label>
+                    <input type="number" name="capacite_max" min="1" placeholder="ex: 100">
+                </div>
+            </div>
+        </div>
+
+        <div id="atelier-fields" class="type-fields" style="display:none">
+            <h3>Détails atelier</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nombre de postes</label>
+                    <input type="number" name="nb_postes" min="1" value="10">
+                </div>
+                <div class="form-group">
+                    <label>Niveau requis</label>
+                    <select name="niveau_requis">
+                        <option value="debutant">Débutant</option>
+                        <option value="intermediaire">Intermédiaire</option>
+                        <option value="avance">Avancé</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Matériel requis</label>
+                <textarea name="materiel" placeholder="Liste du matériel..."></textarea>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-orange">Créer l'événement</button>
+    </form>
+</div>
+
+<script>
+function toggleType() {
+    const t = document.querySelector('input[name="type_ev"]:checked').value;
+    document.getElementById('conf-fields').style.display = t === 'conference' ? '' : 'none';
+    document.getElementById('atelier-fields').style.display = t === 'atelier' ? '' : 'none';
+}
+</script>
+{% endblock %}

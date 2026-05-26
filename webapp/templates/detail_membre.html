@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}{{ membre.prenom }} {{ membre.nom }} — UniClub Connect{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">{{ membre.prenom }} {{ membre.nom }}</h1>
+    <div>
+        <a href="{{ url_for('modifier_membre', id=membre.id_membre) }}" class="btn btn-orange">Modifier</a>
+        <a href="{{ url_for('membres') }}" class="btn btn-gray">← Retour</a>
+    </div>
+</div>
+
+<div class="row-2">
+    <div class="card">
+        <h2>Informations</h2>
+        <dl class="info-list">
+            <dt>Email</dt><dd>{{ membre.email }}</dd>
+            <dt>Statut</dt>
+            <dd><span class="badge {{ 'badge-blue' if membre.statut == 'etudiant' else 'badge-purple' }}">{{ membre.statut }}</span></dd>
+        </dl>
+    </div>
+
+    <div class="card">
+        <h2>Clubs ({{ clubs|length }})</h2>
+        {% if clubs %}
+        <table>
+            <thead><tr><th>Club</th><th>Thématique</th><th>Rôle</th><th>Depuis</th></tr></thead>
+            <tbody>
+            {% for c in clubs %}
+            <tr>
+                <td>{{ c.nom }}</td>
+                <td>{{ c.thematique }}</td>
+                <td><span class="badge badge-green">{{ c.role_dans_club }}</span></td>
+                <td>{{ c.date_adhesion.strftime('%d/%m/%Y') }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty">Pas encore membre d'un club.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <h2>Participations aux événements ({{ events|length }})</h2>
+    {% if events %}
+    <table>
+        <thead><tr><th>Événement</th><th>Date</th><th>Lieu</th><th>Type</th><th>Présent</th></tr></thead>
+        <tbody>
+        {% for e in events %}
+        <tr>
+            <td>{{ e.titre }}</td>
+            <td>{{ e.date_evenement.strftime('%d/%m/%Y') }}</td>
+            <td>{{ e.lieu }}</td>
+            <td><span class="badge {{ 'badge-blue' if e.type_ev == 'Conférence' else 'badge-green' }}">{{ e.type_ev }}</span></td>
+            <td>{{ '✅' if e.present else '❌' }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">Aucune participation enregistrée.</p>
+    {% endif %}
+</div>
+{% endblock %}
