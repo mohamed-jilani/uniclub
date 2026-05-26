@@ -6,6 +6,8 @@ AUTEUR: Projet de Modélisation de Base de Données
 DATE: Mai 2026
 SGBD: PostgreSQL 15+
 
+lien video : https://www.youtube.com/watch?v=715aP93wlq4
+
 ================================================================================
 1. DESCRIPTION DU PROJET
 ================================================================================
